@@ -1,0 +1,107 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <stdexcept>
+#include <clocale>
+
+class Complex {
+private:
+    double a;
+    double b;
+
+public:
+    Complex() : a(0.0), b(0.0) {}
+
+    Complex(double real, double imag) : a(real), b(imag) {}
+
+    Complex(const Complex& other) : a(other.a), b(other.b) {}
+
+    ~Complex() {}
+
+    void Init(double real, double imag) {
+        this->a = real;
+        this->b = imag;
+    }
+
+    void Read() {
+        std::cout << "Введіть a: ";
+        std::cin >> this->a;
+        std::cout << "Введіть b: ";
+        std::cin >> this->b;
+    }
+
+    Complex operator+(const Complex& other) {
+        return Complex(this->a + other.a, this->b + other.b);
+    }
+
+    Complex operator-(const Complex& other) {
+        return Complex(this->a - other.a, this->b - other.b);
+    }
+
+    Complex operator*(const Complex& other) {
+        double new_a = (this->a * other.a) - (this->b * other.b);
+        double new_b = (this->a * other.b) + (this->b * other.a);
+        return Complex(new_a, new_b);
+    }
+
+    Complex operator/(const Complex& other) {
+        double denominator = (other.a * other.a) + (other.b * other.b);
+        if (denominator == 0) {
+            throw std::runtime_error("Division by zero");
+        }
+        double num_real = (this->a * other.a) + (this->b * other.b);
+        double num_imag = (this->b * other.a) - (this->a * other.b);
+        return Complex(num_real / denominator, num_imag / denominator);
+    }
+
+    bool operator==(const Complex& other) {
+        return (this->a == other.a) && (this->b == other.b);
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Complex& c) {
+        os << c.a;
+        if (c.b > 0) {
+            os << " + " << c.b << "i";
+        }
+        else if (c.b < 0) {
+            os << " - " << -c.b << "i";
+        }
+        return os;
+    }
+};
+
+int main() {
+    setlocale(LC_ALL, "uk_UA.UTF-8");
+
+    Complex c1(5.0, 3.0);
+    Complex c2(1.0, -2.0);
+
+    std::cout << "c1 = " << c1 << std::endl;
+    std::cout << "c2 = " << c2 << std::endl;
+
+    Complex c_sum = c1 + c2;
+    std::cout << "c1 + c2 = " << c_sum << std::endl;
+
+    Complex c_sub = c1 - c2;
+    std::cout << "c1 - c2 = " << c_sub << std::endl;
+
+    Complex c_mul = c1 * c2;
+    std::cout << "c1 * c2 = " << c_mul << std::endl;
+
+    try {
+        Complex c_div = c1 / c2;
+        std::cout << "c1 / c2 = " << c_div << std::endl;
+    }
+    catch (const std::runtime_error& e) {
+        std::cout << "Помилка: " << e.what() << std::endl;
+    }
+
+    if (c1 == c2) {
+        std::cout << "c1 дорівнює c2" << std::endl;
+    }
+    else {
+        std::cout << "c1 не дорівнює c2" << std::endl;
+    }
+
+    return 0;
+}
