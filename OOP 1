@@ -1,0 +1,83 @@
+#include <iostream>
+#include <cmath>
+#include <limits>
+#define NOMINMAX
+#include <windows.h> 
+
+using namespace std;
+
+struct PowerPair {
+    double first;
+    int second;
+
+    void Init(double f, int s) {
+        if (f == 0.0 && s < 0) {
+            cout << "WARNING (Init): Invalid arguments. Cannot raise 0 to a negative power." << endl;
+            cout << "Setting safe default values: (0, 0)." << endl;
+            first = 0.0;
+            second = 0;
+        }
+        else {
+            first = f;
+            second = s;
+        }
+    }
+
+    void Read() {
+        double f_input;
+        int s_input;
+
+        cout << "Enter a double (base): ";
+        while (!(cin >> f_input)) {
+            cout << "Error. Please enter a number. Try again: ";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+
+        cout << "Enter an integer (exponent): ";
+        while (!(cin >> s_input)) {
+            cout << "Error. Please enter an integer. Try again: ";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+
+        Init(f_input, s_input);
+    }
+
+    void Display() {
+        cout << "Pair: [First = " << first << ", Second = " << second << "]" << endl;
+    }
+
+    double power() {
+        if (first == 0.0 && second < 0) {
+            cout << "ERROR: Operation undefined." << endl;
+            return 0.0;
+        }
+        return pow(first, second);
+    }
+};
+
+int main() {
+    SetConsoleOutputCP(1251);
+    SetConsoleCP(1251);
+
+    PowerPair p1;
+    cout << "Test 1: Initialization (5.2, 2)" << endl;
+    p1.Init(5.2, 2);
+    p1.Display();
+    cout << "Result (5.0^2): " << p1.power() << endl;
+
+    PowerPair p2;
+    cout << "Test 2: Problematic initialization (0.0, -3)" << endl;
+    p2.Init(0.0, -3);
+    p2.Display();
+    cout << "Result (should be safe 0^0): " << p2.power() << endl;
+
+    PowerPair p3;
+    cout << "Test 3: Reading from keyboard" << endl;
+    p3.Read();
+    p3.Display();
+    cout << "Result (" << p3.first << "^" << p3.second << "): " << p3.power() << endl;
+
+    return 0;
+}
