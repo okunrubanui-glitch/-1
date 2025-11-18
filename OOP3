@@ -1,0 +1,114 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <stdexcept>
+#include <clocale>
+
+class Complex {
+private:
+    double a;
+    double b;
+
+public:
+    Complex() : a(0.0), b(0.0) {
+        std::cout << "Конструктор за замовчуванням. Створено (0 + 0i)" << std::endl;
+    }
+
+    Complex(double real, double imag) : a(real), b(imag) {
+        std::cout << "Конструктор з параметрами. Створено (" << this->toString() << ")" << std::endl;
+    }
+
+    Complex(const Complex& other) : a(other.a), b(other.b) {
+        std::cout << "Конструктор копіювання. Створено копію (" << this->toString() << ")" << std::endl;
+    }
+
+    ~Complex() {
+        std::cout << "Деструктор видалено: (" << this->toString() << ")" << std::endl;
+    }
+
+    void Init(double real, double imag) {
+        this->a = real;
+        this->b = imag;
+    }
+
+    void Read() {
+        std::cout << "Введіть дійсну частину (a): ";
+        std::cin >> this->a;
+        std::cout << "Введіть уявну частину (b): ";
+        std::cin >> this->b;
+    }
+
+    void Display() {
+        std::cout << this->toString() << std::endl;
+    }
+
+    std::string toString() {
+        std::stringstream ss;
+        ss << this->a;
+        if (this->b > 0) {
+            ss << " + " << this->b << "i";
+        }
+        else if (this->b < 0) {
+            ss << " - " << -this->b << "i";
+        }
+        return ss.str();
+    }
+
+    Complex add(const Complex& other) {
+        return Complex(this->a + other.a, this->b + other.b);
+    }
+
+    Complex sub(const Complex& other) {
+        return Complex(this->a - other.a, this->b - other.b);
+    }
+
+    Complex mul(const Complex& other) {
+        double new_a = (this->a * other.a) - (this->b * other.b);
+        double new_b = (this->a * other.b) + (this->b * other.a);
+        return Complex(new_a, new_b);
+    }
+
+    Complex div(const Complex& other) {
+        double denominator = (other.a * other.a) + (other.b * other.b);
+        if (denominator == 0) {
+            throw std::runtime_error("Ділення на нульове комплексне число (0+0i)");
+        }
+        double num_real = (this->a * other.a) + (this->b * other.b);
+        double num_imag = (this->b * other.a) - (this->a * other.b);
+        return Complex(num_real / denominator, num_imag / denominator);
+    }
+
+    bool equ(const Complex& other) {
+        return (this->a == other.a) && (this->b == other.b);
+    }
+
+    Complex conj() {
+        return Complex(this->a, -this->b);
+    }
+};
+
+
+int main() {
+    setlocale(LC_ALL, "uk_UA.UTF-8");
+
+    std::cout << "Демонстрація конструкторів" << std::endl;
+
+    Complex c1;
+    std::cout << "c1 = "; c1.Display();
+
+    Complex c2(5, 3);
+    std::cout << "c2 = "; c2.Display();
+
+    Complex c3 = c2;
+    std::cout << "c3 (копія c2) = "; c3.Display();
+
+
+    std::cout << "\nДемонстрація методів" << std::endl;
+    Complex c_add = c2.add(c3);
+    std::cout << "c2 + c3 = ";
+    c_add.Display();
+
+    std::cout << "\nЗавершення програми та виклик деструкторів" << std::endl;
+
+    return 0;
+}
